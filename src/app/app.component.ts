@@ -10,6 +10,7 @@ import * as lib from './lib/signals.js';
 
 import { initializeGraph } from './lib/graph.js';
 import { encode } from './lib/permalinks';
+import { copyToClipboard } from './lib/copy-clipboard';
 
 @Component({
   selector: 'app-root',
@@ -29,7 +30,7 @@ import { encode } from './lib/permalinks';
     */
   `,
   template: `
-    <h1 class="angular-gradient">Angular Signals Visualizer</h1>
+    <a [href]="baseLink"><h1 class="angular-gradient">Angular Signals Visualizer</h1></a>
     <button (click)="onIncAClick()">INC a</button>
     <button (click)="onExecuteClick()">execute</button>
 
@@ -45,6 +46,7 @@ import { encode } from './lib/permalinks';
   `
 })
 export class AppComponent {
+  baseLink = window.location.href.split("#")[0]
 
   code = signal('')
 
@@ -85,6 +87,7 @@ export class AppComponent {
   onExecuteClick(){
     const encodedSignals = encode(this.code())
     parent.location.hash = `code/${encodedSignals}`
+    copyToClipboard(parent.location.href)
     this.runGraph()
   }
 
