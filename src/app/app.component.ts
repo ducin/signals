@@ -18,16 +18,30 @@ import { copyToClipboard } from './lib/copy-clipboard';
   imports: [CommonModule, FormsModule, RouterOutlet, EditorModule, GraphComponent],
   styles: `
     .editor, .graph {
-      width: 50%;
-      display: inline-block;
+      height: 500px;
+      /* width: 50%; */
+      /* display: inline-block; */
     }
-    /*
+    /* .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    } */
+
     .container {
       display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
+      flex-flow: row wrap;
+      justify-content: flex-start;
+      gap: 10px;
+      align-items: stretch;
+      height: 500px;
     }
-    */
+
+    .item {
+      flex-basis: 300px;
+      flex-grow: 1;
+    }
   `,
   template: `
     <a [href]="baseLink"><h1 class="angular-gradient">Angular Signals Visualizer</h1></a>
@@ -35,10 +49,10 @@ import { copyToClipboard } from './lib/copy-clipboard';
     <button (click)="onExecuteClick()">execute</button>
 
     <div id="container">
-      <span class="editor">
+      <div class="editor item">
         <editor (codeChange)="code.set($event)" (initialized)="runGraph()"></editor>
-      </span>
-      <span id="graph"></span>
+      </div>
+      <div id="graph" class="item"></div>
     </div>
 
     <graph></graph>
@@ -73,7 +87,7 @@ export class AppComponent {
     this.#elementRef.nativeElement.querySelector("#graph").innerHTML = '';
     // execute new
     initializeGraph(this.#signalBroker);
-    
+
     try {
       var fn = new Function('{signal, computed, effect, untracked}', this.code());
       fn(lib);
