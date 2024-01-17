@@ -248,7 +248,7 @@ License: "MIT"
 
 
 --------------------------------------------------------------------------------
-Package: ngx-monaco-editor
+Package: ngx-monaco-editor-v2
 License: "MIT"
 
 

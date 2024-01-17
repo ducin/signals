@@ -21,7 +21,7 @@
     "@angular/router": "^17.0.9",
     "d3": "^7.8.5",
     "monaco-editor": "^0.45.0",
-    "ngx-monaco-editor": "^12.0.0",
+    "ngx-monaco-editor-v2": "^17.0.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.2"
@@ -38,6 +38,6 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "^5.2.2"
+    "typescript": "~5.2.2"
   }
 }

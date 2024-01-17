@@ -19,15 +19,7 @@ import { copyToClipboard } from './lib/copy-clipboard';
   styles: `
     .editor, .graph {
       height: 500px;
-      /* width: 50%; */
-      /* display: inline-block; */
     }
-    /* .container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    } */
 
     .container {
       display: flex;
@@ -48,7 +40,7 @@ import { copyToClipboard } from './lib/copy-clipboard';
     <button (click)="onIncAClick()">INC a</button>
     <button (click)="onExecuteClick()">execute</button>
 
-    <div id="container">
+    <div class="container">
       <div class="editor item">
         <editor (codeChange)="code.set($event)" (initialized)="runGraph()"></editor>
       </div>

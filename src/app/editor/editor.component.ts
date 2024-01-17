@@ -3,20 +3,27 @@ import * as monaco from 'monaco-editor'
 
 import { getInitialCode } from './initial-code';
 
+function shouldUseDarkTheme() {
+  const preferDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const darkReaderOn = document.children[0].getAttribute('data-darkreader-scheme') == 'dark';
+  return preferDark || darkReaderOn;
+}
+
 @Component({
   selector: 'editor',
   styles: `
   .editor-container {
-    height: 250% !important;
+    height: 500px;
   }
   `,
   template: `
   <div class="editor-container">
     <ngx-monaco-editor
-        [options]="editorOptions"
-        [(ngModel)]="code"
-        [ngModel]="code" (ngModelChange)="onCodeChange($event)"
-        (onInit)="onInit($event)"
+    style="height: 100%"
+      [options]="editorOptions"
+      [(ngModel)]="code"
+      [ngModel]="code" (ngModelChange)="onCodeChange($event)"
+      (onInit)="onInit($event)"
     ></ngx-monaco-editor>
   </div>
   `,
@@ -30,7 +37,7 @@ export class EditorComponent {
   initialized = new EventEmitter<void>();
 
   editorOptions = {
-    theme: 'vs-dark',
+    theme: shouldUseDarkTheme() ? 'vs-dark' : 'vs-light',
     language: 'javascript',
     automaticLayout: true,
     minimap: { enabled: false },
