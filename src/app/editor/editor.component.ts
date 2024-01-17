@@ -1,7 +1,8 @@
-import { Component, EventEmitter, Output, ViewEncapsulation } from '@angular/core';
-import * as monaco from 'monaco-editor'
+import { Component, EventEmitter, Output, ViewEncapsulation, inject } from '@angular/core';
+// import * as monaco from 'monaco-editor'
 
 import { getInitialCode } from './initial-code';
+import { EventBrokerService } from '../event-broker.service';
 
 function shouldUseDarkTheme() {
   const preferDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -33,8 +34,10 @@ export class EditorComponent {
   @Output()
   codeChange = new EventEmitter<string>();
 
-  @Output()
-  initialized = new EventEmitter<void>();
+  // @Output()
+  // initialized = new EventEmitter<void>();
+
+  #eventBroker = inject(EventBrokerService)
 
   editorOptions = {
     theme: shouldUseDarkTheme() ? 'vs-dark' : 'vs-light',
@@ -52,7 +55,8 @@ export class EditorComponent {
 
   onInit(editor: any) {
     this.codeChange.emit(this.code);
-    this.initialized.emit();
-    let line = editor.getPosition();
+    this.#eventBroker.publish({ type: 'EXECUTE', code: this.code });
+    // this.initialized.emit();
+    // let line = editor.getPosition();
   }
 }

@@ -6,11 +6,11 @@ import { RouterOutlet } from '@angular/router';
 import { EditorModule } from './editor/editor.module';
 import { GraphComponent } from './graph/graph.component.js';
 import { signalBroker } from './lib/MessageBroker';
-import * as lib from './lib/signals.js';
 
-import { initializeGraph } from './lib/graph.js';
+
 import { encode } from './lib/permalinks';
 import { copyToClipboard } from './lib/copy-clipboard';
+import { EventBrokerService } from './event-broker.service';
 
 @Component({
   selector: 'app-root',
@@ -42,13 +42,13 @@ import { copyToClipboard } from './lib/copy-clipboard';
 
     <div class="container">
       <div class="editor item">
-        <editor (codeChange)="code.set($event)" (initialized)="runGraph()"></editor>
+        <editor (codeChange)="code.set($event)"></editor>
       </div>
-      <div id="graph" class="item"></div>
+      <div class="item">
+        <graph></graph>
+      </div>
     </div>
-
-    <graph></graph>
-    <router-outlet></router-outlet>
+    <!-- <router-outlet></router-outlet> -->
   `
 })
 export class AppComponent {
@@ -56,46 +56,16 @@ export class AppComponent {
 
   code = signal('')
 
-  #elementRef = inject(ElementRef)
-
-  #signalBroker = signalBroker
-  // TODO: (?)
-  // #signalBroker = inject(MessageBroker)
-
-  ngOnInit(){
-    var nextEffectId = 0;
-
-    this.#signalBroker.subscribe('new-effect', ({ target, getValue }) => {
-      lib.effect(() => console.log(getValue()), `effect-${target}-${nextEffectId++}`);
-    });
-
-    this.#signalBroker.subscribe('destroy-effect', ({ target, destroy }) => {
-      destroy();
-    });
-  }
-
-  runGraph() {
-    // clear old
-    this.#elementRef.nativeElement.querySelector("#graph").innerHTML = '';
-    // execute new
-    initializeGraph(this.#signalBroker);
-
-    try {
-      var fn = new Function('{signal, computed, effect, untracked}', this.code());
-      fn(lib);
-      // this is what is used underneath:
-      // fn({ signal: lib.signal, computed: lib.computed, effect: lib.effect, untracked: lib.untracked });
-    } catch (e) {
-      alert(e);
-    }
-  }
+  #eventBroker = inject(EventBrokerService)
 
   onExecuteClick(){
     const encodedSignals = encode(this.code())
     parent.location.hash = `code/${encodedSignals}`
     copyToClipboard(parent.location.href)
-    this.runGraph()
+    this.#eventBroker.publish({ type: 'EXECUTE', code: this.code() })
   }
+
+  #signalBroker = signalBroker // TODO: remove from here
 
   onIncAClick(){
     this.#signalBroker.publish('execute', {
